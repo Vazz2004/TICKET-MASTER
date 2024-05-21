@@ -1,87 +1,48 @@
-import React, { useState } from 'react';
-import { Image } from "@nextui-org/react";
-import YouTube from 'react-youtube';
-import Modal from 'react-modal';
-
-// Estilo para el modal
-const customStyles = {
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-  },
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    border: 'none',
-    borderRadius: '8px',
-    padding: '0',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  },
-};
+import { Button } from "@nextui-org/react";
 
 const Eventos = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [videoId, setVideoId] = useState('');
-
-  // Función para abrir el modal con el video de YouTube
-  const openModal = (videoId) => {
-    setVideoId(videoId);
-    setModalIsOpen(true);
-  }
-
-  // Función para cerrar el modal
-  const closeModal = () => {
-    setModalIsOpen(false);
-  }
-
-  // Opciones para el reproductor de YouTube
-  const opts = {
-    height: '315',
-    width: '560',
-    playerVars: {
-      autoplay: 1,
-    },
-  };
-
   return (
-    <div className="w-full h-full rounded-2xl bg-gray-900 flex flex-col justify-center items-center mt-10 p-10">
-      <h1 className="text-white text-center text-3xl mb-8">Los mejores Eventos con los mejores artistas</h1>
-      <div className="grid grid-cols-3 gap-12">
-        <div className="relative overflow-hidden rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105">
-          <a href="#" onClick={() => openModal('A9XMYzbOz7c')}>
-            <Image
-              isBlurred
-              width={240}
-              height={240}
-              src="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?cs=srgb&dl=pexels-sebastian-ervi-866902-1763075.jpg&fm=jpg"
-              alt="NextUI Album Cover"
-              className="object-cover w-full h-full cursor-pointer"
-            />
-          </a>
-          <p className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-lg text-center py-2">Nombre artista</p>
-        </div>
-
-        {/* Repite lo mismo para las otras imágenes */}
-        {/* Asegúrate de cambiar el videoId correspondiente a cada enlace */}
-
+    <div className="container mx-auto flex flex-col justify-center items-center mt-10 p-10 border-b-4 rounded-2xl ">
+      <div className="flex justify-end w-full mb-8">
+        <img
+          className="w-60"
+          src="https://i.ibb.co/X45grWw/subir3.png"
+          alt="Logo"
+        />
       </div>
-      {/* Modal para el video de YouTube */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Reproductor de Video"
-      >
-        <button className="absolute top-4 right-4 text-white" onClick={closeModal}>Cerrar</button>
-        <div className="mx-auto" style={{ width: '560px' }}>
-          <YouTube videoId={videoId} opts={opts} />
+      <div className="text-center">
+        <h1 className="text-5xl font-extrabold mb-6">Bienvenido a Tiked Master</h1>
+        <p className="text-xl mb-8">¡Tu plataforma segura y fácil para gestionar eventos!</p>
+        <Button color="warning" auto size="lg" className="font-bold">
+          Comenzar
+        </Button>
+      </div>
+      <div className="w-full flex mt-20 space-x-10">
+        <div className="w-1/2 p-5 bg-white text-gray-800 rounded-lg shadow-md">
+          <p className="text-lg">
+            ¡Bienvenido a Tiked Master! Estamos encantados de tenerte aquí.
+            Nuestra plataforma ofrece una manera segura y sencilla de gestionar
+            tus eventos y entradas. Disfruta de una experiencia sin
+            complicaciones y encuentra los mejores eventos cerca de ti. Ya seas
+            un organizador o un asistente, tenemos todo lo que necesitas para
+            hacer de tu evento un éxito. ¡Empecemos!
+          </p>
         </div>
-      </Modal>
+        <div className="w-1/2 p-5 flex justify-end items-center">
+          <Button color="warning" auto size="lg" className="font-bold mt-10">
+            Ver más
+          </Button>
+        </div>
+      </div>
+      <div className="flex justify-end w-full mt-8">
+        <img
+          className="w-60"
+          src="https://i.ibb.co/kDTTZ6q/ubir2.png"
+          alt="Imagen secundaria"
+        />
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default Eventos;

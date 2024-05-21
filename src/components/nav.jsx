@@ -28,7 +28,7 @@ const Nav = () => {
   ];
 
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+    <Navbar className="bg-orange-400 " isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"} />
       </NavbarContent>
@@ -36,23 +36,29 @@ const Nav = () => {
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           <Logo />
-          <p className="font-bold text-inherit">Tiked Master</p>
+          <p className="font-bold text-inherit text-white ">Tiked Master</p>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarBrand>
           <Logo />
-          <p className="font-bold text-inherit">Tiked Master</p>
+          <p className="font-bold text-inherit text-white">Tiked Master</p>
         </NavbarBrand>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link className="text-white" href="/">
             Inicio
           </Link>
         </NavbarItem>
+
+        <NavbarItem>
+          <Link className="text-white" href="/Informes">
+            Informes
+          </Link>
+        </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Agregar Boletas
+          <Link className="text-white" href="/Boletas" aria-current="page">
+            Agregar
           </Link>
         </NavbarItem>
       </NavbarContent>

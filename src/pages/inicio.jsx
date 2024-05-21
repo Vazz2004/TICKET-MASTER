@@ -1,6 +1,7 @@
 import Nav from "../components/nav"
 import CuerpoPage from "../components/cuerpoPaginaInicio"
 import Eventos from "../components/eventos"
+import Footer from "../components/footer"
 export default function Inicio(){
     return(
         <>
@@ -8,6 +9,7 @@ export default function Inicio(){
         <Nav />
         <Eventos />
         <CuerpoPage />
+        <Footer />
         </div>
         </>
     )
