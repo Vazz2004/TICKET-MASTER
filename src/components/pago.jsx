@@ -1,14 +1,6 @@
-import { useState } from 'react';
-
-const numeroPersonas = localStorage.getItem('personas');
-const numeroPersonasValido = numeroPersonas ? parseInt(numeroPersonas, 10) : 1;
+import { useState, useEffect } from 'react';
 
 const Pago = () => {
-  const datosPrecargados = [
-    { numeroTarjeta: '1234567890123456', nombreTitular: 'John Doe', fechaExpiracion: '12/25', codigoSeguridad: '123' },
-    { numeroTarjeta: '9876543210987654', nombreTitular: 'Jane Doe', fechaExpiracion: '10/24', codigoSeguridad: '456' }
-  ];
-
   const [numeroTarjeta, setNumeroTarjeta] = useState('');
   const [nombreTitular, setNombreTitular] = useState('');
   const [fechaExpiracion, setFechaExpiracion] = useState('');
@@ -16,8 +8,21 @@ const Pago = () => {
   const [errores, setErrores] = useState({});
   const [exito, setExito] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [numeroFormularios, setNumeroFormularios] = useState(numeroPersonasValido);
-  const [emailsInvitados, setEmailsInvitados] = useState(Array(numeroPersonasValido).fill(''));
+  const [emailsInvitados, setEmailsInvitados] = useState([]);
+  const [numeroPersonas, setNumeroPersonas] = useState(0);
+
+  useEffect(() => {
+    const formData = JSON.parse(localStorage.getItem('formData'));
+    if (formData && formData.numeroPersonas && emailsInvitados.length === 0) {
+      setNumeroPersonas(formData.numeroPersonas);
+      setEmailsInvitados(Array(formData.numeroPersonas).fill(''));
+    }
+  }, [emailsInvitados.length]);
+
+  const datosPrecargados = [
+    { numeroTarjeta: '1234567890123456', nombreTitular: 'John Doe', fechaExpiracion: '12/25', codigoSeguridad: '123' },
+    { numeroTarjeta: '9876543210987654', nombreTitular: 'Jane Doe', fechaExpiracion: '10/24', codigoSeguridad: '456' }
+  ];
 
   const validarFormulario = () => {
     const errores = {};
@@ -63,10 +68,18 @@ const Pago = () => {
     window.location = '/';
   };
 
-  const formulariosEmails = emailsInvitados.map((email, index) => (
+  const formulariosEmails = Array.from({ length: numeroPersonas }, (_, index) => (
     <div key={index} className="mb-4">
-      <label htmlFor={`emailInvitado-${index}`} className="block text-gray-700 font-bold mb-2">{`Email del Invitado ${index + 1}`}</label>
-      <input type="email" id={`emailInvitado-${index}`} value={email} onChange={(e) => handleEmailChange(index, e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
+      <label htmlFor={`emailInvitado-${index}`} className="block text-gray-700 font-bold mb-2">
+        {`Email del Invitado ${index + 1}`}
+      </label>
+      <input
+        type="email"
+        id={`emailInvitado-${index}`}
+        value={emailsInvitados[index]}
+        onChange={(e) => handleEmailChange(index, e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded"
+      />
     </div>
   ));
 
@@ -108,7 +121,7 @@ const Pago = () => {
           <div className="mt-8">
             <form onSubmit={handleEnviarInvitaciones}>
               {formulariosEmails}
-              <button onClick={handleEnvioInvitado} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Enviar Invitaciones</button>
+              <button onClick={handleEnvioInvitado} type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Enviar Invitaciones</button>
             </form>
           </div>
         )}

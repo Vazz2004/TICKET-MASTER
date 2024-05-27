@@ -1,132 +1,76 @@
+import { useEffect, useState } from "react";
+import axios from 'axios';
+import jsPDF from 'jspdf';
+import { saveAs } from 'file-saver';
 
-import {  useState } from 'react';
-const numeroPersonas = localStorage.getItem('personas')
+const InformesBotones = () => {
+  const [eventos, setEventos] = useState([]);
 
-const Pago = () => {
-    
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/tiked/tikeds');
+        setEventos(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const datosPrecargados = [
-    {
-      numeroTarjeta: '1234567890123456',
-      nombreTitular: 'John Doe',
-      fechaExpiracion: '12/25',
-      codigoSeguridad: '123'
-    },
-    {
-      numeroTarjeta: '9876543210987654',
-      nombreTitular: 'Jane Doe',
-      fechaExpiracion: '10/24',
-      codigoSeguridad: '456'
-    }
-  ];
+  const descargarWord = () => {
+    const contenido = generarContenidoWord(eventos);
+    const blob = new Blob([contenido], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    saveAs(blob, 'informe.docx');
+  };
 
-  const [numeroTarjeta, setNumeroTarjeta] = useState('');
-  const [nombreTitular, setNombreTitular] = useState('');
-  const [fechaExpiracion, setFechaExpiracion] = useState('');
-  const [codigoSeguridad, setCodigoSeguridad] = useState('');
-  const [errores, setErrores] = useState({});
-  const [exito, setExito] = useState(false);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [numeroFormularios, setNumeroFormularios] = useState(parseInt(numeroPersonas));
-  const [emailsInvitados, setEmailsInvitados] = useState(Array(numeroFormularios).fill(''));
-
-  const validarFormulario = () => {
-    const errores = {};
-    const datosCoinciden = datosPrecargados.some((datos) => {
-      return (
-        datos.numeroTarjeta === numeroTarjeta &&
-        datos.nombreTitular === nombreTitular &&
-        datos.fechaExpiracion === fechaExpiracion &&
-        datos.codigoSeguridad === codigoSeguridad
-      );
+  const generarContenidoWord = (data) => {
+    let contenido = "Tiked ID\tEvento ID\tNúmero de personas\tCorreo de compra\tTotal a pagar\n";
+    data.forEach((evento) => {
+      contenido += `${evento.tiked_id}\t${evento.evento_id || '---'}\t${evento.numeros_personas}\t${evento.correo_compra}\t${evento.total_pagar || '---'}\n`;
     });
-
-    if (!datosCoinciden) {
-      errores.general = 'Los datos ingresados no coinciden con los datos precargados';
-    }
-
-    return errores;
+    return contenido;
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const errores = validarFormulario();
-    if (Object.keys(errores).length === 0) {
-      setExito(true);
-      setMostrarFormulario(true); // Mostrar el formulario después del éxito del pago
-    } else {
-      setErrores(errores);
-    }
+  const descargarPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text('Informe de Tikeds', 105, 10, null, null, 'center');
+    let y = 20;
+    eventos.forEach((evento, index) => {
+      if (index > 0 && index % 3 === 0) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(`Tiked ID: ${evento.tiked_id}`, 10, y);
+      doc.text(`Evento ID: ${evento.evento_id}`, 10, y + 10);
+      doc.text(`Número de personas: ${evento.numeros_personas}`, 10, y + 20);
+      doc.text(`Correo de compra: ${evento.correo_compra}`, 10, y + 30);
+      doc.text(`Total a pagar: ${evento.total_pagar}`, 10, y + 40);
+      y += 50;
+    });
+    doc.save('informe.pdf');
   };
-
-  const handleEnviarInvitaciones = (event) => {
-    event.preventDefault();
-    // Aquí puedes implementar la lógica para enviar las invitaciones utilizando los correos electrónicos de los invitados (emailsInvitados)
-    console.log('Enviar invitaciones a:', emailsInvitados);
-  };
-
-  const handleEmailChange = (index, value) => {
-    const newEmails = [...emailsInvitados];
-    newEmails[index] = value;
-    setEmailsInvitados(newEmails);
-  };
-
-  const handleEnvioInvitado = () =>{
-    window.location= '/'
-  }
-
-  const formulariosEmails = emailsInvitados.map((email, index) => (
-    <div key={index} className="mb-4">
-      <label htmlFor={`emailInvitado-${index}`} className="block text-gray-700 font-bold mb-2">{`Email del Invitado ${index + 1}`}</label>
-      <input type="email" id={`emailInvitado-${index}`} value={email} onChange={(e) => handleEmailChange(index, e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
-    </div>
-  ));
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
-        <div className="mb-8 flex justify-center">
-          <img src="https://www.mastercard.es/content/dam/public/mastercardcom/eu/es/images/Consumidores/escoge-tu-tarjeta/credito/credito-world/1280x720-mc-sym-card-wrld-ci-5BIN-mm.png" alt="Tarjeta de Crédito" className="w-40" />
-        </div>
-        <form onSubmit={handleSubmit}>
-          {exito && (
-            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-              <p className="font-bold">Éxito:</p>
-              <p>Los datos ingresados coinciden con los datos precargados.</p>
-            </div>
-          )}
-          {errores.general && <p className="text-red-500 text-sm mb-4">{errores.general}</p>}
-          <div className="mb-4">
-            <label htmlFor="numeroTarjeta" className="block text-gray-700 font-bold mb-2">Número de Tarjeta</label>
-            <input type="text" id="numeroTarjeta" value={numeroTarjeta} onChange={(e) => setNumeroTarjeta(e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="nombreTitular" className="block text-gray-700 font-bold mb-2">Nombre del Titular</label>
-            <input type="text" id="nombreTitular" value={nombreTitular} onChange={(e) => setNombreTitular(e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4 flex justify-between">
-            <div className="w-1/2 mr-2">
-              <label htmlFor="fechaExpiracion" className="block text-gray-700 font-bold mb-2">Fecha de Expiración</label>
-              <input type="text" id="fechaExpiracion" value={fechaExpiracion} onChange={(e) => setFechaExpiracion(e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
-            </div>
-            <div className="w-1/2 ml-2">
-              <label htmlFor="codigoSeguridad" className="block text-gray-700 font-bold mb-2">Código de Seguridad</label>
-              <input type="text" id="codigoSeguridad" value={codigoSeguridad} onChange={(e) => setCodigoSeguridad(e.target.value)} className="w-full p-2 border border-gray-300 rounded" />
-            </div>
-          </div>
-          <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Pagar</button>
-        </form>
-        {mostrarFormulario && (
-          <div className="mt-8">
-            <form onSubmit={handleEnviarInvitaciones}>
-              {formulariosEmails}
-              <button onClick={handleEnvioInvitado} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Enviar Invitaciones</button>
-            </form>
-          </div>
-        )}
+    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+      <h1 className="text-4xl font-bold text-center mb-8">Informes Tikend Master</h1>
+      <div className="flex justify-center space-x-6">
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+          onClick={descargarWord}
+        >
+          Descargar en Word
+        </button>
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+          onClick={descargarPDF}
+        >
+          Descargar en PDF
+        </button>
       </div>
     </div>
   );
 };
 
-export default Pago;
+export default InformesBotones;

@@ -95,8 +95,8 @@ const FormAgregar = () => {
                 <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mt-10">
                     <Input
                         type="text"
-                        label="Nombre Completo"
-                        placeholder="Ingrese su nombre completo"
+                        label="Nombre "
+                        placeholder="Ingrese su nombre "
                         name="nombre"
                         value={formData.nombre}
                         onChange={handleChange}
