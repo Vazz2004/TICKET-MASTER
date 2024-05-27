@@ -1,23 +1,12 @@
+import { useState } from 'react';
 
-import {  useState } from 'react';
-const numeroPersonas = localStorage.getItem('personas')
+const numeroPersonas = localStorage.getItem('personas');
+const numeroPersonasValido = numeroPersonas ? parseInt(numeroPersonas, 10) : 1;
 
 const Pago = () => {
-    
-
   const datosPrecargados = [
-    {
-      numeroTarjeta: '1234567890123456',
-      nombreTitular: 'John Doe',
-      fechaExpiracion: '12/25',
-      codigoSeguridad: '123'
-    },
-    {
-      numeroTarjeta: '9876543210987654',
-      nombreTitular: 'Jane Doe',
-      fechaExpiracion: '10/24',
-      codigoSeguridad: '456'
-    }
+    { numeroTarjeta: '1234567890123456', nombreTitular: 'John Doe', fechaExpiracion: '12/25', codigoSeguridad: '123' },
+    { numeroTarjeta: '9876543210987654', nombreTitular: 'Jane Doe', fechaExpiracion: '10/24', codigoSeguridad: '456' }
   ];
 
   const [numeroTarjeta, setNumeroTarjeta] = useState('');
@@ -27,8 +16,8 @@ const Pago = () => {
   const [errores, setErrores] = useState({});
   const [exito, setExito] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [numeroFormularios, setNumeroFormularios] = useState(parseInt(numeroPersonas));
-  const [emailsInvitados, setEmailsInvitados] = useState(Array(numeroFormularios).fill(''));
+  const [numeroFormularios, setNumeroFormularios] = useState(numeroPersonasValido);
+  const [emailsInvitados, setEmailsInvitados] = useState(Array(numeroPersonasValido).fill(''));
 
   const validarFormulario = () => {
     const errores = {};
@@ -53,7 +42,7 @@ const Pago = () => {
     const errores = validarFormulario();
     if (Object.keys(errores).length === 0) {
       setExito(true);
-      setMostrarFormulario(true); // Mostrar el formulario después del éxito del pago
+      setMostrarFormulario(true);
     } else {
       setErrores(errores);
     }
@@ -61,7 +50,6 @@ const Pago = () => {
 
   const handleEnviarInvitaciones = (event) => {
     event.preventDefault();
-    // Aquí puedes implementar la lógica para enviar las invitaciones utilizando los correos electrónicos de los invitados (emailsInvitados)
     console.log('Enviar invitaciones a:', emailsInvitados);
   };
 
@@ -71,9 +59,9 @@ const Pago = () => {
     setEmailsInvitados(newEmails);
   };
 
-  const handleEnvioInvitado = () =>{
-    window.location= '/'
-  }
+  const handleEnvioInvitado = () => {
+    window.location = '/';
+  };
 
   const formulariosEmails = emailsInvitados.map((email, index) => (
     <div key={index} className="mb-4">

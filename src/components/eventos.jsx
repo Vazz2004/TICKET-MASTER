@@ -6,7 +6,7 @@ const Eventos = () => {
       <div className="flex justify-end w-full mb-8">
         <img
           className="w-60"
-          src="https://i.ibb.co/X45grWw/subir3.png"
+          src="https://i.ibb.co/xsg0t24/subir3.png"
           alt="Logo"
         />
       </div>
@@ -37,7 +37,7 @@ const Eventos = () => {
       <div className="flex justify-end w-full mt-8">
         <img
           className="w-60"
-          src="https://i.ibb.co/kDTTZ6q/ubir2.png"
+          src="https://i.ibb.co/1nyk56K/subir1.png"
           alt="Imagen secundaria"
         />
       </div>
